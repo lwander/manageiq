@@ -166,6 +166,10 @@ module AuthenticationMixin
           cred = AuthToken.new(:name => "#{self.class.name} #{name}", :authtype => type.to_s,
                                                :resource_id => id, :resource_type => "ExtManagementSystem")
           authentications << cred
+        elsif self.kind_of?(ManageIQ::Providers::Google::CloudManager) && value[:service_account]
+          cred = AuthServiceAccount.new(:name => "#{self.class.name} #{name}", :authtype => type.to_s,
+                                        :type => "AuthServiceAccount")
+          authentications << cred
         else
           cred = authentications.build(:name => "#{self.class.name} #{name}", :authtype => type.to_s,
                                             :type => "AuthUseridPassword")
@@ -305,7 +309,7 @@ module AuthenticationMixin
   end
 
   def available_authentications
-    authentication_userid_passwords + authentication_key_pairs + authentication_tokens
+    authentication_userid_passwords + authentication_key_pairs + authentication_tokens + authentication_service_accounts
   end
 
   def authentication_types

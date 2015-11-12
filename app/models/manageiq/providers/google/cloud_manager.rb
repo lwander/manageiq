@@ -43,8 +43,8 @@ class ManageIQ::Providers::Google::CloudManager < ManageIQ::Providers::CloudMana
     require 'fog/google'
 
     ::Fog::Compute.new(
-      :provider => "Google",
-      :google_project => project,
+      :provider               => "Google",
+      :google_project         => project,
       :google_json_key_string => authentication_service_account(auth_type),
     )
   end

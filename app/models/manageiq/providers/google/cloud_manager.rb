@@ -71,6 +71,7 @@ class ManageIQ::Providers::Google::CloudManager < ManageIQ::Providers::CloudMana
   def self.raw_connect(google_project, google_json_key)
     require 'fog/google'
 
+    auth_token = authentication_token(auth_type)
     ::Fog::Compute.new(
       :provider               => "Google",
       :google_project         => google_project,

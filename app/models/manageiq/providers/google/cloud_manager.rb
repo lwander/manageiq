@@ -71,7 +71,7 @@ class ManageIQ::Providers::Google::CloudManager < ManageIQ::Providers::CloudMana
   def connect(options = {})
     require 'fog/google'
 
-    raise MiqException::MiqHostError, "No credentials defined" if self.missing_credentials?(options[:auth_type])
+    raise MiqException::MiqHostError, "No credentials defined" if self.missing_credentials?
 
     auth_token = authentication_token(options[:auth_type])
 

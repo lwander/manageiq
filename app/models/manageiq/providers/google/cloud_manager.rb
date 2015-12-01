@@ -20,7 +20,7 @@ class ManageIQ::Providers::Google::CloudManager < ManageIQ::Providers::CloudMana
   def supported_auth_types
     %w(
       oauth
-      service_account
+      auth_key
     )
   end
 
@@ -42,10 +42,11 @@ class ManageIQ::Providers::Google::CloudManager < ManageIQ::Providers::CloudMana
   def verify_credentials(auth_type = nil, _options = {})
     require 'fog/google'
 
+    auth_token = authentication_token(auth_type)
     ::Fog::Compute.new(
-      :provider => "Google",
-      :google_project => project,
-      :google_json_key_string => authentication_service_account(auth_type),
+      :provider               => "Google",
+      :google_project         => project,
+      :google_json_key_string => auth_token,
     )
   end
 

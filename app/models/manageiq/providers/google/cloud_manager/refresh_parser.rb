@@ -55,6 +55,7 @@ module ManageIQ::Providers
 
       def get_instances
         instances = @connection.servers.all
+        _log.info("Instances: ${instances.inspect}")
         process_collection(instances, :vms) { |instance| parse_instance(instance) }
       end
 

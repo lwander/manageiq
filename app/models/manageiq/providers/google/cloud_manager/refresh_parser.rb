@@ -172,6 +172,7 @@ module ManageIQ::Providers
             :disks                => [],
             :networks             => [],
           }
+          :zone_uid          => zone_uid,
         }
 
         return uid, new_result

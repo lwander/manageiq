@@ -39,22 +39,42 @@ class ManageIQ::Providers::Google::CloudManager < ManageIQ::Providers::CloudMana
     ManageIQ::Providers::Google::Regions.find_by_name(provider_region)[:description]
   end
 
-  def verify_credentials(auth_type = nil, _options = {})
-    require 'fog/google'
+  def verify_credentials(auth_type = nil, options = {})
+    begin
+      options[:auth_type] = auth_type
 
-    auth_token = authentication_token(auth_type)
-    ::Fog::Compute.new(
-      :provider               => "Google",
-      :google_project         => project,
-      :google_json_key_string => auth_token,
-    )
+      connection = connect(options)
+
+      # Not all errors will cause Fog to raise an exception,
+      # for example an error in the google_project id will
+      # succeed to connect but the first API call will raise
+      # an exception, so make a simple call to the API to
+      # confirm everything is working
+      connection.regions.all
+    rescue => err
+      raise MiqException::MiqInvalidCredentialsError, err.message
+    end
+
+    true
   end
 
   #
   # Connections
   #
 
-  def connect(_options = {})
+  def connect(options = {})
+    require 'fog/google'
+
+    raise MiqException::MiqHostError, "No credentials defined" if self.missing_credentials?(options[:auth_type])
+
+    auth_token = authentication_token(options[:auth_type])
+
+    ::Fog::Compute.new(
+      :provider               => "Google",
+      :google_project         => project,
+      :google_json_key_string => auth_token,
+    )
+
   end
 
   def gce

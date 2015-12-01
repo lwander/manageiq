@@ -170,6 +170,7 @@ class MiqAeClassController < ApplicationController
       # need to set record as Domain record if it's a domain, editable_domains, enabled_domains,
       # visible domains methods returns list of Domains, need this for toolbars to hide/disable correct records.
       @record = MiqAeDomain.find_by_id(from_cid(id[1])) if @record.domain?
+      @version_message = domain_version_message(@record) if @record.domain?
       if @record.nil?
         set_root_node
       else
@@ -189,12 +190,24 @@ class MiqAeClassController < ApplicationController
       end
     else
       @grid_data = User.current_tenant.visible_domains
+      add_all_domains_version_message(@grid_data)
       @record = nil
       @right_cell_text = "Datastore"
       @sb[:active_tab] = "namespaces"
       set_right_cell_text(x_node)
     end
     x_history_add_item(:id => x_node, :text => @right_cell_text)
+  end
+
+  def domain_version_message(domain)
+    version = domain.version
+    available_version = domain.available_version
+    return if version.nil? || available_version.nil?
+    _("%s domain: Currently version - %s, Available version - %s") % [domain.name, version, available_version] if version != available_version
+  end
+
+  def add_all_domains_version_message(domains)
+    @version_messages = domains.collect { |dom| domain_version_message(dom) }.compact
   end
 
   # Tree node selected in explorer
@@ -2002,11 +2015,8 @@ class MiqAeClassController < ApplicationController
 
   # Common routine to find checked items on a page (checkbox ids are "check_xxx" where xxx is the item id or index)
   def find_checked_items(_prefix = nil)
-    if !params[:miq_grid_checks].blank?
-      return params[:miq_grid_checks].split(",")
-    elsif !params[:miq_grid_checks2].blank?
-      return params[:miq_grid_checks2].split(",")
-    end
+    # AE can't use ApplicationController#find_checked_items because that one expects non-prefixed ids
+    params[:miq_grid_checks].split(",") unless params[:miq_grid_checks].blank?
   end
 
   def field_attributes

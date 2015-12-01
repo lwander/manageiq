@@ -1533,7 +1533,7 @@ class ApplicationController < ActionController::Base
 
   # Common routine to find checked items on a page (checkbox ids are "check_xxx" where xxx is the item id or index)
   def find_checked_items(prefix = nil)
-    unless params[:miq_grid_checks].blank?
+    if !params[:miq_grid_checks].blank?
       return params[:miq_grid_checks].split(",").collect { |c| from_cid(c) }
     else
       prefix = "check" if prefix.nil?
@@ -2351,10 +2351,8 @@ class ApplicationController < ActionController::Base
       case controller_name
 
       # These controllers don't use breadcrumbs, see above get method to store URL
-      when "dashboard", "report", "support", "alert", "jobs", "ui_jobs", "miq_ae_tools", "miq_policy", "miq_action", "miq_capacity", "chargeback"
+      when "dashboard", "report", "support", "alert", "jobs", "ui_jobs", "miq_ae_tools", "miq_policy", "miq_action", "miq_capacity", "chargeback", "service"
 
-      when "service"
-        session[:tab_bc][:vs] = @breadcrumbs.dup if ["show", "show_list"].include?(action_name)
       when "ontap_storage_system", "ontap_logical_disk", "cim_base_storage_extent", "ontap_storage_volume", "ontap_file_share", "snia_local_file_system", "storage_manager"
         session[:tab_bc][:sto] = @breadcrumbs.dup if ["show", "show_list", "index"].include?(action_name)
       when "ems_cloud", "availability_zone", "flavor"

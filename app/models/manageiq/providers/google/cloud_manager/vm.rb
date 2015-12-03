@@ -3,7 +3,7 @@ class ManageIQ::Providers::Google::CloudManager::Vm < ManageIQ::Providers::Cloud
 
   def provider_object(connection = nil)
     connection ||= ext_management_system.connect
-    connection.servers
+    connection.servers.get(name, availability_zone.name)
   end
 
   #

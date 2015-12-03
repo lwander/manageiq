@@ -165,7 +165,6 @@ module ManageIQ::Providers
           :raw_power_state   => instance.state,
           :flavor            => flavor,
           :availability_zone => zone,
-          :zone_uid          => zone_uid,
           :hardware          => {
             :cpu_sockets          => flavor[:cpus],
             :cpu_total_cores      => flavor[:cpu_cores],

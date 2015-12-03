@@ -90,24 +90,21 @@ class ManageIQ::Providers::Google::CloudManager < ManageIQ::Providers::CloudMana
   # Operations
 
   def vm_start(vm, _options = {})
-    vm.provider_object.start(vm.name, vm.zone_uid)
+    vm.provider_object.servers.get(vm.name, vm.availability_zone.name).start
     vm.update_attributes!(:raw_power_state => "VM starting")
   rescue => err
-    # TODO logging
   end
 
   def vm_stop(vm, _options = {})
-    vm.provider_object.stop(vm.name, vm.zone_uid)
+    vm.provider_object.servers.get(vm.name, vm.availability_zone.name).stop
     vm.update_attributes!(:raw_power_state => "VM stopping")
   rescue => err
-    # TODO logging
   end
 
   def vm_restart(vm, _options = {})
-    vm.provider_object.reboot(vm.name, vm.zone_uid)
+    vm.provider_object.servers.get(vm.name, vm.availability_zone.name).restart
     vm.update_attributes!(:raw_power_state => "VM starting")
   rescue => err
-    # TODO logging
   end
 
 end

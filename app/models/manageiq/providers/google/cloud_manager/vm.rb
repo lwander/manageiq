@@ -1,4 +1,6 @@
 class ManageIQ::Providers::Google::CloudManager::Vm < ManageIQ::Providers::CloudManager::Vm
+  include_concern 'Operations'
+
   def provider_object(connection = nil)
     connection ||= ext_management_system.connect
     connection.servers
